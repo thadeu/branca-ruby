@@ -2,6 +2,7 @@
 
 Authenticated and encrypted API tokens using modern crypto.
 
+[![Gem Version](https://badge.fury.io/rb/branca-ruby.svg)](https://badge.fury.io/rb/branca-ruby)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
 ## What?
