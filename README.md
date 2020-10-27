@@ -1,4 +1,4 @@
-#  Branca Tokens for PHP
+#  Branca Tokens for Ruby
 
 Authenticated and encrypted API tokens using modern crypto.
 
