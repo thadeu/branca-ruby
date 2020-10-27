@@ -8,9 +8,9 @@ require 'branca/exceptions'
 require 'branca/decoder'
 
 module Branca
-  VERSION = 0xBA
-
   class << self
+    VERSION = 0xBA
+
     attr_accessor :secret_key, :ttl
 
     def encode(message, timestamp = Time.now.utc)
