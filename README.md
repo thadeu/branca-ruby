@@ -41,6 +41,14 @@ Branca.encode('with string')
 # 1y48BiLKOcB4N8xjazwFpas3DwOovXzu6vtbiUr4bDAGLaVyFjIN5Xwz5p3qvNYsi5kWjk7ilgnS
 ```
 
+or JSON stringified
+
+```ruby
+Branca.encode(JSON.generate({ permissions: [] }))
+
+# ATkzLjriA1ijbBcuZOJ1zMR0z5oVXDGDVjUWwrqJWszynAM4GLGiTwZnC6nUvtVIuavAVCMbwcsYqlYKejOI4
+```
+
 You can also pass `timestamp` to encode
 
 ```ruby
