@@ -4,18 +4,11 @@ rvm:
   - 2.5
 
 cache: 
-  - bundler
   directories:
     - $HOME/libsodium
 
 before_install:
   - sudo ./.travis-libsodium.sh
   - gem install bundler -v '< 2'
-
-addons:
-  sources:
-
-  apt:
-    update: true
 
 script: "bundle exec rspec --color"
