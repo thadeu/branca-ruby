@@ -39,7 +39,7 @@ module Branca
     end
 
     def secret_key
-      @secret_key ||= RbNaCl::Random.random_bytes(32)
+      @secret_key&.b || RbNaCl::Random.random_bytes(32)
     end
 
     def configure
@@ -49,7 +49,7 @@ module Branca
     private
 
     def cipher
-      @cipher ||= RbNaCl::AEAD::XChaCha20Poly1305IETF.new(Branca.secret_key&.b)
+      @cipher ||= RbNaCl::AEAD::XChaCha20Poly1305IETF.new(secret_key)
     end
 
     def token_explode(token)

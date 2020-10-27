@@ -80,12 +80,12 @@ RSpec.describe Branca do
   end
 
   describe '.decode' do
-    let(:secret_key) { 'supersecretkeyyoushouldnotcommit' }
-    let(:ttl) { 3_600 }
-    let(:timestamp) { Time.now }
+    let!(:secret_key) { 'supersecretkeyyoushouldnotcommit'.b }
+    let!(:ttl) { 3_600 }
+    let!(:timestamp) { Time.now }
     let!(:token) { Branca.encode('with string', timestamp) }
 
-    before do
+    before(:each) do
       Branca.configure do |config|
         config.secret_key = secret_key
         config.ttl = ttl
