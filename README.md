@@ -25,6 +25,8 @@ gem 'branca-ruby', '~> 1.0.1'
 You must be configure `secret_key` and `ttl` using this.
 
 ```ruby
+require 'branca'
+
 Branca.configure do |config|
   config.secret_key = 'supersecretkeyyoushouldnotcommit'.b
   config.ttl = 86_400 # in seconds
