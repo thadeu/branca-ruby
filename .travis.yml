@@ -6,7 +6,14 @@ rvm:
 cache: bundler
 
 before_install:
-  - apt install libsodium-dev
+  - sudo add-apt-repository ppa:chris-lea/libsodium
+  - sudo echo "deb http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list
+  - sudo echo "deb-src http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list
+  - sudo apt install libsodium-dev -y
   - gem install bundler -v '< 2'
+
+addons:
+  apt:
+    update: true
 
 script: "bundle exec rspec --color"
