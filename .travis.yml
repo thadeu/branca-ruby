@@ -3,16 +3,18 @@ language: ruby
 rvm:
   - 2.5
 
-cache: bundler
+cache: 
+  - bundler
+  directories:
+    - $HOME/libsodium
 
 before_install:
-  - sudo add-apt-repository ppa:chris-lea/libsodium
-  - sudo echo "deb http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list
-  - sudo echo "deb-src http://ppa.launchpad.net/chris-lea/libsodium/ubuntu trusty main" >> /etc/apt/sources.list
-  - sudo apt install libsodium-dev -y
+  - sudo ./.travis-libsodium.sh
   - gem install bundler -v '< 2'
 
 addons:
+  sources:
+
   apt:
     update: true
 
