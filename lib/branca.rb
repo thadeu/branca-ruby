@@ -11,7 +11,7 @@ module Branca
   VERSION = 0xBA
 
   class << self
-    attr_writer :secret_key, :ttl
+    attr_accessor :secret_key, :ttl
 
     def encode(message, timestamp = Time.now.utc)
       nonce = RbNaCl::Random.random_bytes(cipher.nonce_bytes)
