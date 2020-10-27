@@ -1,0 +1,10 @@
+Metrics/LineLength:
+  Max: 120
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'branca.gemspec'
+    - 'spec/**/*.rb'
