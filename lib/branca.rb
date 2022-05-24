@@ -14,7 +14,7 @@ module Branca
     attr_accessor :secret_key, :ttl
 
     def encode(message, timestamp = Time.now.utc, secret_key: self.secret_key)
-      cipher = RbNaCl::AEAD::XChaCha20Poly1305IETF.new(secret_key)
+      cipher = create_cipher(secret_key)
       nonce = RbNaCl::Random.random_bytes(cipher.nonce_bytes)
 
       header = [VERSION, timestamp.to_i].pack('C N') + nonce
@@ -31,7 +31,7 @@ module Branca
       raise VersionError unless version == VERSION
       raise ExpiredTokenError if (timestamp + ttl) < Time.now.utc.to_i
 
-      cipher = RbNaCl::AEAD::XChaCha20Poly1305IETF.new(secret_key)
+      cipher = create_cipher(secret_key)
       message = cipher.decrypt(nonce, bytes.pack('C*'), header.pack('C*'))
     rescue RbNaCl::CryptoError
       raise DecodeError
@@ -52,6 +52,10 @@ module Branca
     end
 
     private
+
+    def create_cipher(key)
+      RbNaCl::AEAD::XChaCha20Poly1305IETF.new(key)
+    end
 
     def token_explode(token)
       bytes = BaseX::Base62.decode(token).unpack('C C4 C24 C*')
