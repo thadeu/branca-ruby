@@ -80,6 +80,8 @@ Token is expired, will receive exception `Branca::ExpiredTokenError`
 
 Invalid Version, will receive exception `Branca::VersionError`
 
+When handling error, will receive exception `Branca::DecodeError`
+
 ## Contributing
 
 We have a long list of valued contributors. Check them all at: https://github.com/thadeu/branca-ruby.
