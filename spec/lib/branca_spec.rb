@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'securerandom'
 
 RSpec.describe Branca do
   describe 'initializer setup' do
@@ -103,6 +104,36 @@ RSpec.describe Branca do
       it 'must be return ExpiredTokenError' do
         expect { Branca.decode(token) }.to raise_error(Branca::ExpiredTokenError)
       end
+    end
+  end
+
+  context 'with specific secret_key' do
+    let(:specific_secret_key) { SecureRandom.bytes(32) }
+
+    it 'can successfully encode and decode' do
+      payload = "sensitive data"
+      token = Branca.encode(payload, secret_key: specific_secret_key)
+      expect(Branca.decode(token, secret_key: specific_secret_key).message).to eq(payload)
+    end
+
+    it 'must use the same key' do
+      payload = "sensitive data"
+      token = Branca.encode(payload, secret_key: specific_secret_key)
+      expect { Branca.decode(token, secret_key: SecureRandom.bytes(32)).message }.to raise_error(Branca::DecodeError)
+    end
+  end
+
+  context 'with specific ttl' do
+    it 'can successfully encode and decode' do
+      payload = "sensitive data"
+      token = Branca.encode(payload, Time.now.utc - 60)
+      expect(Branca.decode(token, ttl: 120).message).to eq(payload)
+    end
+
+    it 'raises ExpiredTokenError when token is older than supplied ttl' do
+      payload = "sensitive data"
+      token = Branca.encode(payload, Time.now.utc - 60)
+      expect { Branca.decode(token, ttl: 30).message }.to raise_error(Branca::ExpiredTokenError)
     end
   end
 end
