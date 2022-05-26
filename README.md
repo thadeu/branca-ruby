@@ -17,7 +17,7 @@ It is possible to use [Branca as an alternative to JWT](https://appelsiini.net/2
 Add this line to your application's Gemfile, Note that you also must have [libsodium](https://download.libsodium.org/doc/) installed.
 
 ```ruby
-gem 'branca-ruby', '~> 1.0.1'
+gem 'branca-ruby', '~> 1.0.2'
 ```
 
 ## Configure
