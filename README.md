@@ -53,7 +53,17 @@ Branca.encode(JSON.generate({ permissions: [] }))
 # ATkzLjriA1ijbBcuZOJ1zMR0z5oVXDGDVjUWwrqJWszynAM4GLGiTwZnC6nUvtVIuavAVCMbwcsYqlYKejOI4
 ```
 
-You can also pass `timestamp` to encode
+You can also pass `secret_key` in runtime
+
+```ruby
+specific_secret_key = SecureRandom.bytes(32)
+payload = "sensitive data"
+token = Branca.encode(payload, secret_key: specific_secret_key)
+```
+
+Will generate a token using `secret_key` in runtime instead global `secret_key`.
+
+So, you can also pass `timestamp` to encode.
 
 ```ruby
 Branca.encode('with string', Time.now.utc)
@@ -74,11 +84,23 @@ decode.message
 # "with string"
 ```
 
+You can also pass `secret_key` or `ttl` in runtime. For example:
+
+```ruby
+specific_secret_key = SecureRandom.bytes(32)
+tmp_token = "1y48BiV0jaalTYiARPdbm52IKgGEhfwq8DlP9ulKBx8LMLFrjNKe88vIGIUxsWzybIwBhmVvIam5"
+token = Branca.decode(tmp_token, secret_key: specific_secret_key, ttl: 30)
+```
+
+Will decode token OR throw exception `DecodeError`
+
 ## Exceptions
 
-Token is expired, will receive exception `Branca::ExpiredTokenError`
+Token is expired, you will receive exception `Branca::ExpiredTokenError`
 
-Invalid Version, will receive exception `Branca::VersionError`
+Invalid Version, you will receive exception `Branca::VersionError`
+
+When handle error, you will receive exception `Branca::DecodeError`
 
 ## Contributing
 
