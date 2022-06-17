@@ -1,15 +1,17 @@
 # frozen_string_literal: true
 
 module Branca
-  class VersionError < StandardError; end
+  class Error < StandardError; end
+  
+  class VersionError < Error; end
 
-  class DecodeError < StandardError
+  class DecodeError < Error
     def to_s
       "Can't decode token"
     end
   end
 
-  class ExpiredTokenError < StandardError
+  class ExpiredTokenError < Error
     def to_s
       'Token is expired'
     end
