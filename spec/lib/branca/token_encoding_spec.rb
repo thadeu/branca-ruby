@@ -16,16 +16,14 @@ RSpec.describe 'Branca token encoding (spec-compliant Base62)' do
     end
   end
 
-  describe 'Base62 character set and Node.js compatibility' do
+  describe 'Base62 character set per spec' do
     it 'encodes tokens using only 0-9, A-Z, a-z' do
       token = Branca.encode('any payload')
-      
       expect(token).to match(BASE62_SPEC_ALPHABET)
     end
 
-    it 'never produces token starting with 0 (avoids "Invalid token version" in branca-js)' do
+    it 'never produces token starting with 0' do
       token = Branca.encode('any payload')
-
       expect(token).not_to start_with('0')
     end
 
@@ -37,9 +35,7 @@ RSpec.describe 'Branca token encoding (spec-compliant Base62)' do
         stage: ENV.fetch('WEBPACKER_ENV', 'development'),
         extra: 'data'
       }
-
       token = Branca.encode(JSON.generate(encode_params))
-
       expect(token).to match(BASE62_SPEC_ALPHABET)
     end
   end
@@ -58,11 +54,9 @@ RSpec.describe 'Branca token encoding (spec-compliant Base62)' do
         stage: 'production',
         foo: 'bar'
       }
-
       token = encode_payload(encode_params)
       decoded = Branca.decode(token)
       parsed = JSON.parse(decoded.message)
-      
       expect(parsed['user_id']).to eq('42')
       expect(parsed['user_ids']).to eq(%w[42 10 20])
       expect(parsed['logo_id']).to eq('')
@@ -78,11 +72,9 @@ RSpec.describe 'Branca token encoding (spec-compliant Base62)' do
           logo_id: '',
           stage: stage
         }
-
         token = encode_payload(payload)
         decoded = Branca.decode(token)
         parsed = JSON.parse(decoded.message)
-
         expect(parsed['stage']).to eq(stage)
         expect(parsed['logo_id']).to eq('')
       end
@@ -92,7 +84,6 @@ RSpec.describe 'Branca token encoding (spec-compliant Base62)' do
       message = 'legacy payload'
       token = Branca.encode(message)
       decoded = Branca.decode(token)
-
       expect(decoded.message).to eq(message)
     end
 
@@ -104,19 +95,17 @@ RSpec.describe 'Branca token encoding (spec-compliant Base62)' do
           logo_id: n.even? ? '' : n.to_s,
           stage: 'test'
         }
-
         token = encode_payload(payload)
         decoded = Branca.decode(token)
         parsed = JSON.parse(decoded.message)
-
         expect(parsed['user_id']).to eq(n.to_s)
         expect(parsed['user_ids'].size).to eq(n)
       end
     end
   end
 
-  describe 'payload that previously produced invalid token for Node.js (branca-js)' do
-    PAYLOAD_INVALID_IN_NODE = {
+  describe 'specific production payload' do
+    PRODUCTION_PAYLOAD = {
       user_id: '16574',
       user_ids: ['16574'],
       logo_id: 'c55953547000101',
@@ -127,31 +116,46 @@ RSpec.describe 'Branca token encoding (spec-compliant Base62)' do
       Branca.encode(JSON.generate(payload))
     end
 
-    it 'never produces token starting with 0 for this exact payload' do
-      token = encode_payload(PAYLOAD_INVALID_IN_NODE)
-
+    it 'never produces token starting with 0 for production payload' do
+      token = encode_payload(PRODUCTION_PAYLOAD)
       expect(token).not_to start_with('0'),
-        "Token must not start with '0' (branca-js would decode as Invalid token version). Got: #{token[0..40]}..."
+        "Token must not start with '0'. Got: #{token[0..40]}..."
     end
 
-    it 'produces Node-safe token across multiple encodes (random nonce)' do
-      50.times do
-        token = encode_payload(PAYLOAD_INVALID_IN_NODE)
-
+    it 'never produces token starting with 0 across multiple encodes' do
+      100.times do
+        token = encode_payload(PRODUCTION_PAYLOAD)
         expect(token).not_to start_with('0'),
           "Token must not start with '0'. Got: #{token[0..40]}..."
       end
     end
 
-    it 'round-trips the exact payload that failed in Node' do
-      token = encode_payload(PAYLOAD_INVALID_IN_NODE)
+    it 'round-trips production payload correctly' do
+      token = encode_payload(PRODUCTION_PAYLOAD)
       decoded = Branca.decode(token)
       parsed = JSON.parse(decoded.message)
-
       expect(parsed['user_id']).to eq('16574')
       expect(parsed['user_ids']).to eq(['16574'])
       expect(parsed['logo_id']).to eq('c55953547000101')
       expect(parsed['stage']).to eq('production')
+    end
+
+    it 'round-trips production payload multiple times (random nonces)' do
+      50.times do
+        token = encode_payload(PRODUCTION_PAYLOAD)
+        decoded = Branca.decode(token)
+        parsed = JSON.parse(decoded.message)
+        expect(parsed['user_id']).to eq('16574')
+        expect(parsed['user_ids']).to eq(['16574'])
+        expect(parsed['logo_id']).to eq('c55953547000101')
+        expect(parsed['stage']).to eq('production')
+      end
+    end
+
+    it 'encodes production payload with valid Base62 characters' do
+      token = encode_payload(PRODUCTION_PAYLOAD)
+      expect(token).to match(BASE62_SPEC_ALPHABET)
+      expect(token.length).to be > 0
     end
   end
 end

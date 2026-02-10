@@ -21,7 +21,7 @@ module Branca
       ciphertext = cipher.encrypt(nonce, message, header)
       raw_token = header + ciphertext
 
-      base62_encode(raw_token)
+      BaseX::Base62.encode(raw_token)
     end
 
     def decode(token, ttl: self.ttl, secret_key: self.secret_key)
@@ -58,26 +58,12 @@ module Branca
     end
 
     def token_explode(token)
-      raw = base62_decode(token)
-      bytes = raw.unpack('C C4 C24 C*')
+      raise DecodeError if token.nil? || token.empty?
+
+      bytes = BaseX::Base62.decode(token).unpack('C C4 C24 C*')
       header = bytes.shift(1 + 4 + 24)
 
       [header, bytes]
-    end
-
-    BASE62_NO_LEADING_ZERO = BaseX.new(
-      '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0'
-    ).freeze
-
-    def base62_encode(raw_token)
-      BASE62_NO_LEADING_ZERO.encode(raw_token)
-    end
-
-    def base62_decode(token)
-      raw = BASE62_NO_LEADING_ZERO.decode(token)
-      return raw if raw.getbyte(0) == VERSION
-
-      BaseX::Base62.decode(token)
     end
 
     def header_explode(header)
