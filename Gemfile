@@ -7,4 +7,4 @@ gemspec
 
 ruby '>= 2.5.8'
 
-gem "byebug", "~> 10.0", :group => :test
+gem "byebug", :group => :test
