@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'rbnacl'
-require 'base_x'
 
 require 'branca/version'
 require 'branca/exceptions'
 require 'branca/decoder'
+require 'branca/base62'
 
 module Branca
   class << self
@@ -21,7 +21,7 @@ module Branca
       ciphertext = cipher.encrypt(nonce, message, header)
       raw_token = header + ciphertext
 
-      BaseX::Base62.encode(raw_token)
+      Branca::Base62.encode(raw_token)
     end
 
     def decode(token, ttl: self.ttl, secret_key: self.secret_key)
@@ -60,7 +60,7 @@ module Branca
     def token_explode(token)
       raise DecodeError if token.nil? || token.empty?
 
-      bytes = BaseX::Base62.decode(token).unpack('C C4 C24 C*')
+      bytes = Branca::Base62.decode(token).unpack('C C4 C24 C*')
       header = bytes.shift(1 + 4 + 24)
 
       [header, bytes]
